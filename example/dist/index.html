@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <script src="../../dist/bpm.min.js"></script>
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+  <style>
+    body {
+      background-color: #EEEEEE;
+      font-size: 10px;
+    }
+    .even, .odd {
+      padding: 30px;
+    }
+    .odd {
+      background-color: #FFF;
+    }
+
+    .pro {
+      color: #FFF;
+      background: #5eb95e;
+    }
+
+    .con {
+      color: #FFF;
+      background: #dd514c;
+      line-height: 24px;
+    }
+
+    iframe {
+      width: 100%;
+      border: 2px solid #000;
+    }
+
+  </style>
+</head>
+<body>
+<button id="sayHelloButton" data-message="Hello iframe 1" data-bpm-target="clientFrame">Say Hello to iframe 1</button>
+<button id="sayByeButton" data-message="Good Bye iframe 1" data-bpm-target="clientFrame">Say Bye to iframe 1</button>
+<button id="sayHelloButton2" data-message="Hello iframe 2" data-bpm-target="clientFrameTwo">Say Hello to iframe 2</button>
+<button id="sayByeButton2" data-message="Good Bye iframe 2" data-bpm-target="clientFrameTwo">Say Bye to iframe 2</button>
+  <iframe id="myIframe" src="iframe.html"></iframe>
+  <iframe id="myIframe2" src="iframe2.html"></iframe>
+  <pre id="logResult"></pre>
+<div></div>
+</body>
+  <script>
+      // helper for demo purpose:
+      var logData = function(state, response){
+        var line = [ state,response.target, response.name, response.msg];
+        if( response.request !== undefined ) {
+          line.push(response.request.target,' for '+response.request.name, response.request.msg)
+        }
+        line.push('\n')
+        document.getElementById("logResult")
+                .appendChild(document.createTextNode(line.join(' - ')));
+      };
+
+
+
+
+      var bpmInstance = bpm.initialize();
+
+
+
+      /**
+       * first frame instance
+       */
+      var clientFrame = bpmInstance.addFrame('myIframe');
+      clientFrame.send({
+        name: 'clientFirstMessage',
+        msg: 'client has something to say to frame 1'
+      }, function(response){
+          logData('>> [MESSAGE clientFirstMessage SENT]',response);
+      });
+
+      clientFrame.listenEventName('childFirstMessage', function(response){
+        logData('<< [MESSAGE childFirstMessage RECEIVED ]',response);
+      });
+      clientFrame.listenEventName('onFrameReady', function(response){
+        logData('[INIT]',response);
+      });
+      clientFrame.listenEventType('receipt', function(response){
+        logData('<< [INCOMING RECEIPT]',response);
+      });
+      clientFrame.listenEventType('message', function(response){
+        logData('<< [INCOMING MESSAGE:]',response);
+      });
+
+      console.log('clientFrame', clientFrame.getUid());
+
+      /**
+       * another iFrame exemple,
+       * frameInstance methods can be chained too:
+       */
+      var clientFrameTwo = bpmInstance
+          .addFrame('myIframe2')
+          .send({
+            name: 'clientFirstMessage',
+            msg: 'client has something to say to frame 2'
+          }, function(response){
+            logData('>> [MESSAGE clientFirstMessage SENT]',response);
+          }).listenEventType('message', function(response){
+            logData('<< [INCOMING MESSAGE:]',response);
+          });
+      console.log('clientFrameTwo', clientFrameTwo.getUid());
+
+
+
+      // register each HTML element that should trigger click events:
+      var listenButtons= [
+        document.getElementById('sayHelloButton'),
+        document.getElementById('sayByeButton'),
+        document.getElementById('sayHelloButton2'),
+        document.getElementById('sayByeButton2')
+      ];
+
+
+      // REGISTER EVENTS
+      // loop through registered elements:
+      var tagCount = listenButtons.length;
+      for (var i = 0; i < tagCount; i++) {
+        // add listener on each registered events:
+        listenButtons[i].addEventListener('click', function (e) {
+          var targetElement = e.target || e.srcElement;
+
+
+          var message = targetElement.getAttribute('data-message');
+          var target = targetElement.getAttribute('data-bpm-target');
+          var fn = window[target];
+          if (typeof fn === 'object') {
+            // trigger bpm.send() method
+            fn.send({msg: message});
+          }
+
+        }, false);
+      }
+
+  </script>
+</html>

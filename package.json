@@ -1,0 +1,38 @@
+{
+  "name": "browser-postmessage",
+  "version": "0.1.0",
+  "description": "a bidirectionnal iframe events manager",
+  "keywords": [],
+  "main": "./src/bpm.js",
+  "devDependencies": {
+    "gulp": "^3.8.5",
+    "inherits": "^2.0.1",
+    "del": "^0.1.2",
+    "lodash": "^2.4.1",
+    "event-stream": "^3.1.5",
+    "gulp-connect": "^2.0.5",
+    "gulp-watch": "^0.6.8",
+    "gulp-util": "^2.2.19",
+    "browserify": "^4.2.0",
+    "vinyl-source-stream": "^0.1.1",
+    "gulp-streamify": "0.0.5",
+    "gulp-uglify": "^0.3.1",
+    "gulp-concat": "^2.3.4",
+    "gulp-sourcemaps": "^0.4.4",
+    "gulp-rename": "^1.2.0",
+    "gulp-jshint": "^1.8.4",
+    "jshint-stylish": "^0.4.0",
+    "js-beautify": "^1.5.1",
+    "mkdirp": "^0.5.0",
+    "glob": "^4.0.5",
+    "minimist": "^1.1.0"
+  },
+  "scripts": {
+    "prepublish": "node ./node_modules/gulp/bin/gulp.js",
+    "test": "node ./node_modules/gulp/bin/gulp.js test",
+    "start": "node ./node_modules/gulp/bin/gulp.js dev"
+  },
+  "dependencies": {
+    "inherits": "^2.0.1"
+  }
+}

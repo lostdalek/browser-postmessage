@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="../../dist/bpm.min.js"></script>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <style>
+        body {
+            background-color: #EEEEEE;
+        }
+        .even, .odd {
+            padding: 30px;
+        }
+        .odd {
+            background-color: #FFF;
+        }
+
+        .pro {
+            color: #FFF;
+            background: #5eb95e;
+        }
+
+        .con {
+            color: #FFF;
+            background: #dd514c;
+            line-height: 24px;
+        }
+
+        iframe {
+            width: 100%;
+            border: 2px solid #000;
+        }
+
+    </style>
+</head>
+<body>
+<button id="sayHelloButton" data-id="clickEvent" data-message="Hello from iframe 1" data-bpm-target="selfFrame">Say Hello from iframe</button></h4>
+<pre id="logResult"></pre>
+</body>
+<script>
+    // helper for demo purpose:
+    var logData = function(state, response){
+        var line = [ state, response.name, response.msg];
+        if( response.request !== undefined ) {
+            line.push(response.request.target,' for '+response.request.name, response.request.msg)
+        }
+        line.push('\n')
+        document.getElementById("logResult")
+                .appendChild(document.createTextNode(line.join(' - ')));
+    };
+
+
+
+
+
+    var bpmInstance = bpm.initialize();
+
+    var selfFrame = bpmInstance.addFrame();
+    console.log('iframe1', selfFrame.getUid());
+    selfFrame.send({
+        name: 'frameFirstMessage',
+        msg: 'frame has something to say'
+    }, function(response){
+        logData('>> [MESSAGE frameFirstMessage SENT]',response);
+    });
+
+    selfFrame.listenEventName('clientFirstMessage', function(response){
+        logData('<< [MESSAGE clientFirstMessage RECEIVED]', response);
+    });
+
+    selfFrame.listenEventType('receipt', function(response){
+        logData('<< [INCOMING RECEIPT]',response);
+    });
+
+    selfFrame.listenEventType('message', function(response){
+        logData('<< [INCOMING MESSAGE]',response);
+    });
+
+
+
+    // register each HTML element that should trigger click events:
+    var listenButtons= [
+        document.getElementById('sayHelloButton')
+    ];
+
+
+
+    // REGISTER EVENTS
+    // loop through registered elements:
+    var tagCount = listenButtons.length;
+    for (var i = 0; i < tagCount; i++) {
+        // add listener on each registered events:
+        listenButtons[i].addEventListener('click',function(e){
+            var targetElement = e.target || e.srcElement;
+
+
+            var message = targetElement.getAttribute('data-message');
+            var target = targetElement.getAttribute('data-bpm-target');
+            var fn = window[target];
+            if (typeof fn === 'object') {
+                // trigger bpm.send() method
+                fn.send({msg: message});
+            }
+
+        },false);
+    }
+
+</script>
+</html>
