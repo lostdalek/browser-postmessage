@@ -28,11 +28,24 @@
     "minimist": "^1.1.0"
   },
   "scripts": {
-    "prepublish": "node ./node_modules/gulp/bin/gulp.js",
+    "prepublish": "node ./node_modules/gulp/bin/gulp.js dist",
     "test": "node ./node_modules/gulp/bin/gulp.js test",
     "start": "node ./node_modules/gulp/bin/gulp.js dev"
   },
   "dependencies": {
     "inherits": "^2.0.1"
-  }
+  },
+  "directories": {
+    "example": "example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lostdalek/browser-postmessage.git"
+  },
+  "author": "Florian Blouet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lostdalek/browser-postmessage/issues"
+  },
+  "homepage": "https://github.com/lostdalek/browser-postmessage#readme"
 }
